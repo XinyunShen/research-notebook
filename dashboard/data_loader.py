@@ -18,6 +18,7 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parent.parent
 PHASE1 = ROOT / "phase1"
 PHASE2 = ROOT / "phase2"
+RESEARCH_LOG = ROOT / "research_log"
 
 
 @st.cache_data
@@ -117,6 +118,43 @@ def load_edgar_cik_map() -> dict[str, str]:
 @st.cache_data
 def load_edgar_raw_facts(cik: str) -> dict | None:
     path = PHASE1 / "data" / "edgar_cache" / f"{cik}.json"
+    if not path.exists():
+        return None
+    return json.loads(path.read_text())
+
+
+@st.cache_data
+def load_research_log_index() -> str | None:
+    """每日云端routine维护的 research_log/INDEX.md，一行一条摘要，最新在最上面。"""
+    path = RESEARCH_LOG / "INDEX.md"
+    if not path.exists():
+        return None
+    return path.read_text()
+
+
+@st.cache_data
+def list_research_log_dates() -> list[str]:
+    """从 research_log/*.md（排除INDEX.md）反推有哪些日期跑过，按新到旧排序。"""
+    if not RESEARCH_LOG.exists():
+        return []
+    dates = [p.stem for p in RESEARCH_LOG.glob("*.md") if p.stem != "INDEX"]
+    return sorted(dates, reverse=True)
+
+
+@st.cache_data
+def load_research_log_entry(date_str: str) -> str | None:
+    path = RESEARCH_LOG / f"{date_str}.md"
+    if not path.exists():
+        return None
+    return path.read_text()
+
+
+@st.cache_data
+def load_price_watch_state() -> dict | None:
+    """云端routine每天顺便查的持仓价格/止损状态，见research_log/price_watch_state.json。
+    这只是routine自己算的参考值，不是Robinhood账户的实时权威数据——真要下单前
+    应该在对话里让Claude查一遍Robinhood当前报价，不要只信这个文件。"""
+    path = RESEARCH_LOG / "price_watch_state.json"
     if not path.exists():
         return None
     return json.loads(path.read_text())
