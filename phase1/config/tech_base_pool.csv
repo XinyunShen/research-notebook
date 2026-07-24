@@ -1,0 +1,292 @@
+symbol,name,sector,market_cap,as_of
+NVDA,NVIDIA Corporation Common Stock,Technology,5139717000000,2026-07-22
+AAPL,Apple Inc. Common Stock,Technology,4784259343440,2026-07-22
+GOOGL,Alphabet Inc. Class A Common Stock,Technology,4211158120000,2026-07-22
+GOOG,Alphabet Inc. Class C Capital Stock,Technology,4201223000000,2026-07-22
+MSFT,Microsoft Corporation Common Stock,Technology,2891481066358,2026-07-22
+AVGO,Broadcom Inc. Common Stock,Technology,1863068405537,2026-07-22
+META,Meta Platforms Inc. Class A Common Stock,Technology,1597785164470,2026-07-22
+MU,Micron Technology Inc. Common Stock,Technology,1096544751203,2026-07-22
+AMD,Advanced Micro Devices Inc. Common Stock,Technology,906124775092,2026-07-22
+INTC,Intel Corporation Common Stock,Technology,533109830400,2026-07-22
+AMAT,Applied Materials Inc. Common Stock,Technology,446145652703,2026-07-22
+CSCO,Cisco Systems Inc. Common Stock (DE),Telecommunications,445322995625,2026-07-22
+LRCX,Lam Research Corporation Common Stock,Technology,400207731420,2026-07-22
+ORCL,Oracle Corporation Common Stock,Technology,364235557950,2026-07-22
+PLTR,Palantir Technologies Inc. Class A Common Stock,Technology,303667508127,2026-07-22
+DELL,Dell Technologies Inc. Class C Common Stock ,Technology,288391853295,2026-07-22
+KLAC,KLA Corporation Common Stock,Technology,283605410843,2026-07-22
+PANW,Palo Alto Networks Inc. Common Stock,Technology,272959800000,2026-07-22
+TXN,Texas Instruments Incorporated Common Stock,Technology,268941520668,2026-07-22
+CCZ,Comcast Holdings ZONES,Telecommunications,235836478805,2026-07-22
+SNDK,Sandisk Corporation Common Stock,Technology,235781108200,2026-07-22
+ANET,Arista Networks Inc. Common Stock,Telecommunications,221732984601,2026-07-22
+TMUS,T-Mobile US Inc. Common Stock,Telecommunications,206280123312,2026-07-22
+IBM,International Business Machines Corporation Common Stock,Technology,197704868648,2026-07-22
+APH,Amphenol Corporation Common Stock,Technology,193096737323,2026-07-22
+WDC,Western Digital Corporation Common Stock,Technology,193070248858,2026-07-22
+CRWD,CrowdStrike Holdings Inc. Class A Common Stock,Technology,191025440928,2026-07-22
+ADI,Analog Devices Inc. Common Stock,Technology,188159288117,2026-07-22
+QCOM,QUALCOMM Incorporated Common Stock,Technology,187385390000,2026-07-22
+VZ,Verizon Communications Inc. Common Stock,Telecommunications,186417827537,2026-07-22
+MRVL,Marvell Technology Inc. Common Stock,Technology,186328064157,2026-07-22
+T,AT&T Inc.,Telecommunications,159290667792,2026-07-22
+APP,Applovin Corporation Class A Common Stock,Technology,140362450800,2026-07-22
+CRM,Salesforce Inc. Common Stock,Technology,135724680000,2026-07-22
+VRT,Vertiv Holdings LLC Class A Common Stock,Technology,115507474658,2026-07-22
+FTNT,Fortinet Inc. Common Stock,Technology,113663071380,2026-07-22
+NOW,ServiceNow Inc. Common Stock,Technology,100579205000,2026-07-22
+NET,Cloudflare Inc. Class A Common Stock,Technology,95103636221,2026-07-22
+CDNS,Cadence Design Systems Inc. Common Stock,Technology,94866913200,2026-07-22
+SNOW,Snowflake Inc. Common Stock,Technology,92940790000,2026-07-22
+ADBE,Adobe Inc. Common Stock,Technology,88314562500,2026-07-22
+DDOG,Datadog Inc. Class A Common Stock,Technology,87982679915,2026-07-22
+CMCSA,Comcast Corporation Class A Common Stock,Telecommunications,85450071348,2026-07-22
+INTU,Intuit Inc. Common Stock,Technology,79273757970,2026-07-22
+DASH,DoorDash Inc. Class A Common Stock,Technology,78481656207,2026-07-22
+SNPS,Synopsys Inc. Common Stock,Technology,73392110479,2026-07-22
+MPWR,Monolithic Power Systems Inc. Common Stock,Technology,69414303100,2026-07-22
+MSI,Motorola Solutions Inc. Common Stock,Technology,67305398656,2026-07-22
+LITE,Lumentum Holdings Inc. Common Stock,Telecommunications,65881818000,2026-07-22
+HPE,Hewlett Packard Enterprise Company Common Stock,Technology,65362685797,2026-07-22
+COHR,Coherent Corp. Common Stock,Technology,62432420118,2026-07-22
+ALAB,Astera Labs Inc. Common Stock,Technology,57850179413,2026-07-22
+CBRS,Cerebras Systems Inc. Class A Common Stock,Technology,49241061284,2026-07-22
+XYZ,Block Inc. Class A Common Stock,Technology,46539425340,2026-07-22
+MCHP,Microchip Technology Incorporated Common Stock,Technology,46367484714,2026-07-22
+CRWV,CoreWeave Inc. Class A Common Stock,Technology,45525117522,2026-07-22
+ADSK,Autodesk Inc. Common Stock,Technology,43299310000,2026-07-22
+ON,ON Semiconductor Corporation Common Stock,Technology,36791871571,2026-07-22
+RBLX,Roblox Corporation Class A Common Stock,Technology,36328761521,2026-07-22
+MSTR,Strategy Inc Common Stock Class A,Technology,34841527434,2026-07-22
+WDAY,Workday Inc. Class A Common Stock,Technology,33466030000,2026-07-22
+UI,Ubiquiti Inc. Common Stock,Technology,32857439947,2026-07-22
+NTAP,NetApp Inc. Common Stock,Technology,32810369108,2026-07-22
+RDDT,Reddit Inc. Class A Common Stock,Technology,32533086290,2026-07-22
+VEEV,Veeva Systems Inc. Class A Common Stock,Technology,30053040237,2026-07-22
+Q,Qnity Electronics Inc. Common Stock,Technology,29280253949,2026-07-22
+TWLO,Twilio Inc. Class A Common Stock,Technology,28157086507,2026-07-22
+ZM,Zoom Communications Inc. Class A Common Stock,Technology,25370451501,2026-07-22
+P,Everpure Inc. Class A common stock,Technology,24855578790,2026-07-22
+MDB,MongoDB Inc. Class A Common Stock,Technology,24495543368,2026-07-22
+OKTA,Okta Inc. Class A Common Stock,Technology,24195723282,2026-07-22
+VRSN,VeriSign Inc. Common Stock,Technology,23803780000,2026-07-22
+ZS,Zscaler Inc. Common Stock,Technology,23139824480,2026-07-22
+HPQ,HP Inc. Common Stock,Technology,23068834855,2026-07-22
+FFIV,F5 Inc. Common Stock,Telecommunications,22939501638,2026-07-22
+FSLR,First Solar Inc. Common Stock,Technology,22748414214,2026-07-22
+MTSI,MACOM Technology Solutions Holdings Inc. Common Stock,Technology,21812198829,2026-07-22
+ROKU,Roku Inc. Class A Common Stock,Telecommunications,21184885709,2026-07-22
+CTSH,Cognizant Technology Solutions Corporation Class A Common Stock,Technology,20558826913,2026-07-22
+IOT,Samsara Inc. Class A Common Stock,Technology,19672292368,2026-07-22
+LSCC,Lattice Semiconductor Corporation Common Stock,Technology,19026966141,2026-07-22
+SMCI,Super Micro Computer Inc. Common Stock,Technology,18983774384,2026-07-22
+CHTR,Charter Communications Inc. Class A Common Stock New,Telecommunications,17974870170,2026-07-22
+SITM,SiTime Corporation Common Stock,Technology,17749993006,2026-07-22
+TOST,Toast Inc. Class A Common Stock,Technology,17420300000,2026-07-22
+AMKR,Amkor Technology Inc. Common Stock,Technology,16919778079,2026-07-22
+SSNC,SS&C Technologies Holdings Inc. Common Stock,Technology,16105776358,2026-07-22
+QNT,Quantinuum Inc. Class A Common Stock,Technology,15539502535,2026-07-22
+TTMI,TTM Technologies Inc. Common Stock,Technology,15535968826,2026-07-22
+GEN,Gen Digital Inc. Common Stock,Technology,15476525709,2026-07-22
+RBRK,Rubrik Inc. Class A Common Stock,Technology,15258071598,2026-07-22
+DOCN,DigitalOcean Holdings Inc. Common Stock,Technology,15005481944,2026-07-22
+NTNX,Nutanix Inc. Class A Common Stock,Technology,14478366462,2026-07-22
+LDOS,Leidos Holdings Inc. Common Stock,Technology,13437032405,2026-07-22
+IONQ,IonQ Inc. Common Stock,Technology,13411589232,2026-07-22
+PTC,PTC Inc. Common Stock,Technology,13383656003,2026-07-22
+AUR,Aurora Innovation Inc. Class A Common Stock,Technology,13120448665,2026-07-22
+SMTC,Semtech Corporation Common Stock,Technology,12972231656,2026-07-22
+U,Unity Software Inc. Common Stock,Technology,12794840762,2026-07-22
+PINS,Pinterest Inc. Class A Common Stock,Technology,12746379976,2026-07-22
+DT,Dynatrace Inc. Common Stock,Technology,12239066029,2026-07-22
+TYL,Tyler Technologies Inc. Common Stock,Technology,12161094022,2026-07-22
+AEIS,Advanced Energy Industries Inc. Common Stock,Technology,11992397225,2026-07-22
+GDDY,GoDaddy Inc. Class A Common Stock,Technology,11852005405,2026-07-22
+RMBS,Rambus Inc. Common Stock,Technology,11377090298,2026-07-22
+FIG,Figma Inc. Class A Common Stock,Technology,11346992580,2026-07-22
+GWRE,Guidewire Software Inc. Common Stock,Technology,11184243658,2026-07-22
+HUBS,HubSpot Inc. Common Stock,Technology,10634083268,2026-07-22
+JKHY,Jack Henry & Associates Inc. Common Stock,Technology,10460451086,2026-07-22
+VSAT,ViaSat Inc. Common Stock,Technology,10365583533,2026-07-22
+CACI,CACI International Inc. Class A Common Stock,Technology,10206624736,2026-07-22
+VICR,Vicor Corporation Common Stock,Technology,10159867713,2026-07-22
+WULF,TeraWulf Inc. Common Stock,Technology,10141075580,2026-07-22
+VIAV,Viavi Solutions Inc. Common Stock,Technology,10051021174,2026-07-22
+SWKS,Skyworks Solutions Inc. Common Stock,Technology,9462039132,2026-07-22
+ALGM,Allegro MicroSystems Inc. Common Stock,Technology,9366688193,2026-07-22
+AAOI,Applied Optoelectronics Inc. Common Stock,Technology,9304550047,2026-07-22
+DOCU,DocuSign Inc. Common Stock,Technology,9255085150,2026-07-22
+BSY,Bentley Systems Incorporated Class B Common Stock,Technology,9165545655,2026-07-22
+FORM,FormFactor Inc. FormFactor Inc. Common Stock,Technology,8974621081,2026-07-22
+MANH,Manhattan Associates Inc. Common Stock,Technology,8891256389,2026-07-22
+MTCH,Match Group Inc. Common Stock,Technology,8875791314,2026-07-22
+FDS,FactSet Research Systems Inc. Common Stock,Technology,8783977810,2026-07-22
+TEM,Tempus AI Inc. Class A Common Stock,Technology,8581184737,2026-07-22
+COMP,Compass Inc. Class A Common Stock,Technology,8476451296,2026-07-22
+TTD,The Trade Desk Inc. Class A Common Stock,Technology,8433743996,2026-07-22
+SAIL,SailPoint Inc. Common Stock,Technology,8204302052,2026-07-22
+PL,Planet Labs PBC Class A Common Stock,Technology,8197258098,2026-07-22
+MXL,MaxLinear Inc. Common Stock,Technology,8093611504,2026-07-22
+QRVO,Qorvo Inc. Common Stock,Technology,7884721679,2026-07-22
+SNAP,Snap Inc. Class A Common Stock,Technology,7490367422,2026-07-22
+YOU,Clear Secure Inc. Class A Common Stock,Technology,7449833600,2026-07-22
+ENS,EnerSys Common Stock,Technology,7417124874,2026-07-22
+SLAB,Silicon Laboratories Inc. Common Stock,Technology,7176844685,2026-07-22
+CRUS,Cirrus Logic Inc. Common Stock,Technology,7017973074,2026-07-22
+LUMN,Lumen Technologies Inc. Common Stock,Telecommunications,6949448167,2026-07-22
+INGM,Ingram Micro Holding Corporation Common Stock,Technology,6913467643,2026-07-22
+PAYC,Paycom Software Inc. Common Stock,Technology,6724608111,2026-07-22
+DBX,Dropbox Inc. Class A Common Stock,Technology,6700394639,2026-07-22
+TTAN,ServiceTitan Inc. Class A Common Stock,Technology,6527102355,2026-07-22
+PCTY,Paylocity Holding Corporation Common Stock,Technology,6502925844,2026-07-22
+QBTS,D-Wave Quantum Inc. Common Shares,Technology,6489421850,2026-07-22
+S,SentinelOne Inc. Class A Common Stock,Technology,6333298782,2026-07-22
+PCOR,Procore Technologies Inc. Common Stock,Technology,6305324901,2026-07-22
+VSH,Vishay Intertechnology Inc. Common Stock,Technology,6232020320,2026-07-22
+NAVN,Navan Inc. Class A Common Stock,Technology,6138285008,2026-07-22
+ACMR,ACM Research Inc. Class A Common Stock,Technology,6100635209,2026-07-22
+HNGE,Hinge Health Inc. Class A Common Stock,Technology,6079756736,2026-07-22
+PSN,Parsons Corporation Common Stock,Technology,6033588584,2026-07-22
+MRCY,Mercury Systems Inc Common Stock,Technology,5980611203,2026-07-22
+CVLT,Commvault Systems Inc. Common Stock,Technology,5864482729,2026-07-22
+DUOL,Duolingo Inc. Class A Common Stock,Technology,5737942359,2026-07-22
+APPF,AppFolio Inc. Class A Common Stock,Technology,5720657054,2026-07-22
+ACIW,ACI Worldwide Inc. Common Stock,Technology,5568004189,2026-07-22
+PATH,UiPath Inc. Class A Common Stock,Technology,5564559845,2026-07-22
+ENPH,Enphase Energy Inc. Common Stock,Technology,5369459483,2026-07-22
+GTLB,GitLab Inc. Class A Common Stock,Technology,5332173000,2026-07-22
+VRNS,Varonis Systems Inc. Common Stock,Technology,5212562410,2026-07-22
+ZETA,Zeta Global Holdings Corp. Class A Common Stock,Technology,5154647602,2026-07-22
+RGTI,Rigetti Computing Inc. Common Stock,Technology,5145533532,2026-07-22
+IRDM,Iridium Communications Inc Common Stock,Telecommunications,5084447209,2026-07-22
+NTSK,Netskope Inc. Class A Common Stock,Technology,4970280501,2026-07-22
+QLYS,Qualys Inc. Common Stock,Technology,4953297242,2026-07-22
+KVYO,Klaviyo Inc. Series A Common Stock,Technology,4929138520,2026-07-22
+MARA,MARA Holdings Inc. Common Stock,Technology,4891700553,2026-07-22
+SAIC,Science Applications International Corporation Common Stock,Technology,4861411417,2026-07-22
+SYNA,Synaptics Incorporated Common Stock $0.001 Par Value,Technology,4728479890,2026-07-22
+UCTT,Ultra Clean Holdings Inc. Common Stock,Technology,4625165218,2026-07-22
+EPAM,EPAM Systems Inc. Common Stock,Technology,4564597684,2026-07-22
+PEGA,Pegasystems Inc. Common Stock,Technology,4446958117,2026-07-22
+ACLS,Axcelis Technologies Inc. Common Stock,Technology,4437206379,2026-07-22
+DIOD,Diodes Incorporated Common Stock,Technology,4391397676,2026-07-22
+ONDS,Ondas Inc. Common Stock,Technology,4373817726,2026-07-22
+IPGP,IPG Photonics Corporation Common Stock,Technology,4364264815,2026-07-22
+LBRDA,Liberty Broadband Corporation Class A Common Stock,Telecommunications,4346546242,2026-07-22
+LBRDK,Liberty Broadband Corporation Class C Common Stock,Telecommunications,4345828753,2026-07-22
+LASR,nLIGHT Inc. Common Stock,Technology,4295878565,2026-07-22
+LIF,Life360 Inc. Common Stock,Technology,4256594728,2026-07-22
+BILL,BILL Holdings Inc. Common Stock,Technology,4222901225,2026-07-22
+LILAP,Liberty Latin America Ltd. 9.0% Fixed Rate Cumulative Perpetual Redeemable Series A Preference Shares,Telecommunications,4131720590,2026-07-22
+POWI,Power Integrations Inc. Common Stock,Technology,4126064815,2026-07-22
+PI,Impinj Inc. Common Stock,Technology,4118386404,2026-07-22
+EXTR,Extreme Networks Inc. Common Stock,Telecommunications,4009656178,2026-07-22
+WAY,Waystar Holding Corp. Common Stock,Technology,4008889422,2026-07-22
+BOX,Box Inc. Class A Common Stock,Technology,3987354960,2026-07-22
+OLED,Universal Display Corporation Common Stock,Technology,3869571248,2026-07-22
+TDS,Telephone and Data Systems Inc. Common Shares,Telecommunications,3861234000,2026-07-22
+LFTO,Liftoff Mobile Inc. Common Stock,Technology,3831027281,2026-07-22
+DOCS,Doximity Inc. Class A Common Stock,Technology,3753448765,2026-07-22
+AXTI,AXT Inc Common Stock,Technology,3635893451,2026-07-22
+TENB,Tenable Holdings Inc. Common Stock,Technology,3580530963,2026-07-22
+FA,First Advantage Corporation Common Stock,Technology,3540524650,2026-07-22
+OSIS,OSI Systems Inc. Common Stock (DE),Technology,3463055189,2026-07-22
+CCC,CCC Intelligent Solutions Holdings Inc. Common Stock,Technology,3404255109,2026-07-22
+VECO,Veeco Instruments Inc. Common Stock,Technology,3402616789,2026-07-22
+QTWO,Q2 Holdings Inc. Common Stock,Technology,3258978021,2026-07-22
+PPLI,People Incorporated Common Stock,Technology,3222466327,2026-07-22
+RNG,RingCentral Inc. Class A Common Stock,Technology,3179918264,2026-07-22
+FSLY,Fastly Inc. Class A Common Stock,Technology,3169125000,2026-07-22
+NVTS,Navitas Semiconductor Corporation Common Stock,Technology,3146394551,2026-07-22
+PENG,Penguin Solutions Inc. Common Stock,Technology,3117605807,2026-07-22
+CARG,CarGurus Inc. Class A Common Stock ,Technology,3077634719,2026-07-22
+ADEA,Adeia Inc. Common Stock,Technology,3067269160,2026-07-22
+BHE,Benchmark Electronics Inc. Common Stock,Technology,3029098149,2026-07-22
+AD,Array Digital Infrastructure Inc. Common Shares,Telecommunications,3017217600,2026-07-22
+NTCT,NetScout Systems Inc. Common Stock,Technology,2952752380,2026-07-22
+WK,Workiva Inc. Class A Common Stock,Technology,2920450245,2026-07-22
+SOUN,SoundHound AI Inc Class A Common Stock,Technology,2804347235,2026-07-22
+FRSH,Freshworks Inc. Class A Common Stock,Technology,2790602916,2026-07-22
+BRZE,Braze Inc. Class A Common Stock,Technology,2786851730,2026-07-22
+VISN,Vistance Networks Inc. Common Stock,Technology,2755333043,2026-07-22
+AGYS,Agilysys Inc. Common Stock (DE),Technology,2753431010,2026-07-22
+TDC,Teradata Corporation Common Stock,Technology,2733134500,2026-07-22
+DJT,Trump Media & Technology Group Corp. Common Stock,Technology,2712762745,2026-07-22
+MGNI,Magnite Inc. Common Stock,Technology,2683849156,2026-07-22
+RUM,RUM Group Inc. Class A Common Stock,Technology,2667576965,2026-07-22
+SHAZ,SharonAI Holdings Inc. Class A Common Stock,Technology,2644401467,2026-07-22
+KD,Kyndryl Holdings Inc. Common Stock,Technology,2640693566,2026-07-22
+ATEN,A10 Networks Inc. Common Stock,Telecommunications,2615693698,2026-07-22
+AVPT,AvePoint Inc. Class A Common Stock,Technology,2582369447,2026-07-22
+DGII,Digi International Inc. Common Stock,Telecommunications,2527932443,2026-07-22
+ALRM,Alarm.com Holdings Inc. Common Stock,Technology,2502705500,2026-07-22
+PLUS,ePlus inc. Common Stock,Technology,2425862998,2026-07-22
+RAMP,LiveRamp Holdings Inc. Common Stock,Technology,2270119577,2026-07-22
+SPSC,SPS Commerce Inc. Common Stock,Technology,2225891122,2026-07-22
+PDFS,PDF Solutions Inc. Common Stock,Technology,2174900983,2026-07-22
+BAND,Bandwidth Inc. Class A Common Stock,Technology,2173334799,2026-07-22
+INOD,Innodata Inc. Common Stock,Technology,2078840090,2026-07-22
+ATEX,Anterix Inc. Common Stock,Telecommunications,2054575548,2026-07-22
+INTA,Intapp Inc. Common Stock,Technology,2024022793,2026-07-22
+EVCM,EverCommerce Inc. Common Stock,Technology,1977424084,2026-07-22
+ZD,Ziff Davis Inc. Common Stock,Telecommunications,1914151561,2026-07-22
+OMCL,Omnicell Inc. Common Stock ($0.001 par value),Technology,1867364004,2026-07-22
+PLAB,Photronics Inc. Common Stock,Technology,1862663220,2026-07-22
+VERX,Vertex Inc. Class A Common Stock,Technology,1830149490,2026-07-22
+WGS,GeneDx Holdings Corp. Class A Common Stock,Technology,1830118424,2026-07-22
+QUBT,Quantum Computing Inc. Common Stock,Technology,1829088745,2026-07-22
+MQ,Marqeta Inc. Class A Common Stock,Technology,1814849735,2026-07-22
+NCNO,nCino Inc. Common Stock,Technology,1805432616,2026-07-22
+FIVN,Five9 Inc. Common Stock,Technology,1792362959,2026-07-22
+ALKT,Alkami Technology Inc. Common Stock,Technology,1775983193,2026-07-22
+CTS,CTS Corporation Common Stock,Technology,1750029057,2026-07-22
+EPAC,Enerpac Tool Group Corp. Common Stock,Technology,1740981158,2026-07-22
+SHLS,Shoals Technologies Group Inc. Class A Common Stock,Technology,1727210856,2026-07-22
+AMBQ,Ambiq Micro Inc. Common Stock,Technology,1689325839,2026-07-22
+DV,DoubleVerify Holdings Inc. Common Stock,Technology,1682734832,2026-07-22
+APPN,Appian Corporation Class A Common Stock,Technology,1657278609,2026-07-22
+BL,BlackLine Inc. Common Stock,Technology,1652184727,2026-07-22
+LIME,Neutron Holdings Inc. Common Stock,Technology,1616014625,2026-07-22
+LILA,Liberty Latin America Ltd. Class A Common Stock,Telecommunications,1612811040,2026-07-22
+TRIP,TripAdvisor Inc. Common Stock,Technology,1603456909,2026-07-22
+LILAK,Liberty Latin America Ltd. Class C Common Stock,Telecommunications,1600626341,2026-07-22
+WOLF,Wolfspeed Inc. Common Stock New,Technology,1599701269,2026-07-22
+PRCH,Porch Group Inc. Common Stock,Technology,1596443475,2026-07-22
+AIP,Arteris Inc. Common Stock,Technology,1590624780,2026-07-22
+ASAN,Asana Inc. Class A Common Stock,Technology,1580144864,2026-07-22
+IDT,IDT Corporation Class B Common Stock,Telecommunications,1573682856,2026-07-22
+PRGS,Progress Software Corporation Common Stock (DE),Technology,1559722184,2026-07-22
+BRUN,Boost Run Inc. Class A Common Stock,Technology,1557831173,2026-07-22
+DXC,DXC Technology Company Common Stock ,Technology,1557220541,2026-07-22
+SKYT,SkyWater Technology Inc. Common Stock,Technology,1531247214,2026-07-22
+VPG,Vishay Precision Group Inc. Common Stock,Technology,1507402330,2026-07-22
+CNXC,Concentrix Corporation Common Stock,Technology,1462914941,2026-07-22
+BBAI,BigBear.ai Inc. Common Stock,Technology,1405716636,2026-07-22
+BLKB,Blackbaud Inc. Common Stock,Technology,1396795343,2026-07-22
+VIA,Via Transportation Inc. Class A Common Stock,Technology,1376339096,2026-07-22
+GLOB,Globant S.A. Common Shares,Technology,1373757574,2026-07-22
+SBET,Sharplink Inc. Common Stock,Technology,1345524669,2026-07-22
+HLIT,Harmonic Inc. Common Stock,Technology,1325826448,2026-07-22
+AI,C3.ai Inc. Class A Common Stock,Technology,1298001463,2026-07-22
+CXM,Sprinklr Inc. Class A Common Stock,Technology,1296456198,2026-07-22
+NSSC,NAPCO Security Technologies Inc. Common Stock,Telecommunications,1287613225,2026-07-22
+AZTA,Azenta Inc.,Technology,1229295083,2026-07-22
+LZ,LegalZoom.com Inc. Common Stock,Technology,1219557363,2026-07-22
+AMPL,Amplitude Inc. Class A Common Stock,Technology,1180974386,2026-07-22
+CRSR,Corsair Gaming Inc. Common Stock,Technology,1155931112,2026-07-22
+CEVA,CEVA Inc. Common Stock,Technology,1152542096,2026-07-22
+SCSC,ScanSource Inc. Common Stock,Technology,1103621925,2026-07-22
+UPWK,Upwork Inc. Common Stock,Technology,1102399373,2026-07-22
+ASST,Strive Inc. Class A Common Stock,Technology,1076832553,2026-07-22
+RXT,Rackspace Technology Inc. Common Stock,Technology,1076572464,2026-07-22
+CERT,Certara Inc. Common Stock,Technology,1061728450,2026-07-22
+RCAT,Red Cat Holdings Inc. Common Stock,Technology,1009555919,2026-07-22
+UMAC,Unusual Machines Inc. Common Stock,Technology,1001282687,2026-07-22
+GDRX,GoodRx Holdings Inc. Class A Common Stock,Technology,1000785727,2026-07-22
+EVLV,Evolv Technologies Holdings Inc. Class A Common Stock,Technology,977601113,2026-07-22
+CRCT,Cricut Inc. Class A Common Stock,Technology,936147908,2026-07-22
+EVER,EverQuote Inc. Class A Common Stock,Technology,914399236,2026-07-22
+KDK,Kodiak AI Inc. Common Stock ,Technology,911261025,2026-07-22
+RDVT,Red Violet Inc. Common Stock ,Technology,910095949,2026-07-22
+GLIBA,Liberty Capital Corporation Series A GCI Group Common Stock,Telecommunications,902650964,2026-07-22

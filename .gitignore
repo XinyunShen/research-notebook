@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+phase1/data/
+phase1/output/
+phase2/data/
+phase2/output/
+portfolio/
