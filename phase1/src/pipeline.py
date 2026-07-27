@@ -59,7 +59,9 @@ def main():
     market_cap_series = factor_panel["market_cap"]
 
     results = {}
-    factor_names = ["momentum", "roe_ttm", "book_to_market"] + (["insider_net_buy_pct"] if include_insider else [])
+    factor_names = ["momentum", "roe_ttm", "book_to_market", "fcf_yield", "margin_trend"] + (
+        ["insider_net_buy_pct"] if include_insider else []
+    )
     for factor_name in factor_names:
         series = factor_panel[factor_name].dropna()
         if series.empty:

@@ -12,6 +12,14 @@
 - 资金流 Fund Flow：内部人净买入占流通股比例，来自 SEC EDGAR Form 4，
   见 insider.py。
 
+**2026-07-24新增2个（design_doc.md 12节：单独测超大盘ROE发现信号偏弱后，
+回应"真实投资者买入前还会看哪些数据"这个问题，找跟现有因子重叠度更低
+的角度，而不是继续在ROE本身上打转）**：
+- fcf_yield：TTM自由现金流（经营性现金流-资本开支）/ 市值，比B/M更贴近
+  "真金白银"的价值信号，对会计政策（折旧/摊销假设）比净利润更不敏感。
+- margin_trend：TTM营业利润率相对一年前同口径TTM营业利润率的变化，跟
+  ROE是不同的角度——ROE看"现在赚不赚钱"，这个看"利润率在变好还是变差"。
+
 关键工程细节（避免前视偏差）：用 pd.merge_asof(..., direction="backward")
 把"某一天"匹配到"当天为止最新已公开申报"的财务数据，绝不会用到未来才
 披露的数字。
@@ -80,21 +88,30 @@ def compute_fundamental_factors(prices: pd.DataFrame, tickers: list[str]) -> pd.
         # 算不算大盘股）。市值算不出来（market_cap<=0，比如shares_outstanding
         # 缺失）时留空，不强行填0。
         merged["market_cap"] = market_cap.where(market_cap > 0, float("nan")).astype("float64")
-        all_rows.append(merged[["date", "ticker", "roe_ttm", "book_to_market", "market_cap"]])
+
+        # --- fcf_yield（2026-07-24新增）：TTM自由现金流 / 市值，跟B/M一样
+        #     需要价格数据才能算出比率，所以放在这里而不是edgar.py ---
+        merged["fcf_yield"] = float("nan")
+        valid_fcf = market_cap > 0
+        merged.loc[valid_fcf, "fcf_yield"] = merged.loc[valid_fcf, "fcf_ttm"] / market_cap[valid_fcf]
+        merged["fcf_yield"] = merged["fcf_yield"].astype("float64")
+
+        all_rows.append(
+            merged[["date", "ticker", "roe_ttm", "book_to_market", "market_cap", "fcf_yield", "margin_trend"]]
+        )
 
     if not all_rows:
-        return pd.DataFrame(columns=["date", "ticker", "roe_ttm", "book_to_market", "market_cap"])
+        return pd.DataFrame(
+            columns=["date", "ticker", "roe_ttm", "book_to_market", "market_cap", "fcf_yield", "margin_trend"]
+        )
     result = pd.concat(all_rows, ignore_index=True)
     # 防御性兜底：任何遗漏路径产生的 inf/-inf 一律当缺失值处理，不能流入
     # 后续的 IC 检验/分层回测，否则会让统计量彻底失真（比如 mean() 变成 -inf）。
-    result["roe_ttm"] = pd.to_numeric(result["roe_ttm"], errors="coerce").replace(
-        [float("inf"), float("-inf")], float("nan")
-    )
-    result["book_to_market"] = pd.to_numeric(result["book_to_market"], errors="coerce").replace(
-        [float("inf"), float("-inf")], float("nan")
-    )
-    result["roe_ttm"] = _winsorize_cross_sectional(result, "roe_ttm")
-    result["book_to_market"] = _winsorize_cross_sectional(result, "book_to_market")
+    for col in ["roe_ttm", "book_to_market", "fcf_yield", "margin_trend"]:
+        result[col] = pd.to_numeric(result[col], errors="coerce").replace(
+            [float("inf"), float("-inf")], float("nan")
+        )
+        result[col] = _winsorize_cross_sectional(result, col)
     return result
 
 

@@ -101,6 +101,27 @@ def _extract_single_quarter_duration(facts: dict, tag: str) -> pd.DataFrame:
     return df[["start", "end", "val", "filed", "form"]].sort_values("filed")
 
 
+_REVENUE_TAGS_PRIORITY = [
+    "RevenueFromContractWithCustomerExcludingAssessedTax",  # ASC 606新准则，2018年后主流
+    "Revenues",  # 旧准则，部分公司至今仍用
+    "SalesRevenueNet",  # 更早的准则，少数公司
+]
+
+
+def _extract_revenue(facts: dict) -> pd.DataFrame:
+    """营收科目在不同公司/不同年代用的XBRL标签不一致（2018年ASC 606新
+    准则切换是主因），按优先级依次尝试，**只取第一个有数据的标签**，不
+    合并多个标签拼成一条序列——不同准则下"营收"的确认口径可能有细微
+    差异，混着拼会引入一条口径不一致的假连续序列，比"某些公司没有营收
+    数据、直接跳过"更危险。
+    """
+    for tag in _REVENUE_TAGS_PRIORITY:
+        df = _extract_single_quarter_duration(facts, tag)
+        if not df.empty:
+            return df
+    return pd.DataFrame(columns=["start", "end", "val", "filed", "form"])
+
+
 MIN_PLAUSIBLE_SHARES_OUTSTANDING = 10_000  # 见下方注释，过滤"壳公司占位股数"这类脏数据
 
 
@@ -134,12 +155,28 @@ def _extract_shares_outstanding(facts: dict) -> pd.DataFrame:
     return df[["end", "val", "filed"]].sort_values("filed")
 
 
+def _ttm_sum(df: pd.DataFrame, value_col: str = "val") -> pd.DataFrame:
+    """把单季度数值滚动求和成TTM（最近4个季度），按 end 日期排序，
+    ROE的net_income_ttm、下面新增的fcf_ttm/营收TTM都复用这个逻辑，
+    避免同一个"单季度->TTM"的滚动求和写三份微妙不一致的实现。"""
+    q = df.drop_duplicates(subset=["end"], keep="last").sort_values("end").copy()
+    q["ttm"] = q[value_col].rolling(4, min_periods=4).sum()
+    return q.dropna(subset=["ttm"])[["filed", "end", "ttm"]]
+
+
 def build_fundamentals_panel(ticker: str, cik: str) -> pd.DataFrame | None:
     """为单只股票构建"逐次披露事件"的基本面面板，每一行代表一次新的
     财报数据点，附带 filed 日期，供 factors.py 用 merge_asof 做
     point-in-time 对齐。
 
-    输出列：filed, stockholders_equity, net_income_ttm, shares_outstanding
+    输出列：filed, stockholders_equity, net_income_ttm, shares_outstanding,
+    fcf_ttm（TTM自由现金流=经营性现金流-资本开支，原始美元金额，除以
+    market_cap算fcf_yield留给factors.py，因为那一步需要价格数据），
+    margin_trend（TTM营业利润率相对一年前同口径TTM营业利润率的变化，
+    2026-07-24新增，回应"哪些真实投资者会看的数据能变成可行因子"这个
+    问题——跟ROE是不同的角度：ROE看"现在赚不赚钱"，这个看"利润率在
+    变好还是变差"，2026-07-24单独测超大盘ROE发现信号很弱之后，尝试
+    换一个跟现有因子重叠度更低的角度，而不是继续在ROE本身上打转）。
     """
     facts = fetch_company_facts(cik)
     if facts is None:
@@ -153,9 +190,7 @@ def build_fundamentals_panel(ticker: str, cik: str) -> pd.DataFrame | None:
         return None
 
     # TTM 净利润 = 最近4个"单季度"数值之和（按 end 日期排序后滚动求和）
-    ni_q = ni.drop_duplicates(subset=["end"], keep="last").sort_values("end")
-    ni_q["net_income_ttm"] = ni_q["val"].rolling(4, min_periods=4).sum()
-    ni_q = ni_q.dropna(subset=["net_income_ttm"])[["filed", "end", "net_income_ttm"]]
+    ni_q = _ttm_sum(ni).rename(columns={"ttm": "net_income_ttm"})
 
     se_q = se.drop_duplicates(subset=["end"], keep="last")[["filed", "end", "val"]].rename(
         columns={"val": "stockholders_equity"}
@@ -178,6 +213,49 @@ def build_fundamentals_panel(ticker: str, cik: str) -> pd.DataFrame | None:
     else:
         panel["shares_outstanding"] = float("nan")
 
+    # --- 自由现金流TTM = 经营性现金流TTM - 资本开支TTM ---
+    ocf = _extract_single_quarter_duration(facts, "NetCashProvidedByUsedInOperatingActivities")
+    capex = _extract_single_quarter_duration(facts, "PaymentsToAcquirePropertyPlantAndEquipment")
+    if not ocf.empty and not capex.empty:
+        ocf_q = _ttm_sum(ocf).rename(columns={"ttm": "ocf_ttm"})
+        capex_q = _ttm_sum(capex).rename(columns={"ttm": "capex_ttm"})
+        fcf_df = pd.merge(ocf_q[["end", "filed", "ocf_ttm"]], capex_q[["end", "capex_ttm"]], on="end", how="inner")
+        fcf_df["fcf_ttm"] = fcf_df["ocf_ttm"] - fcf_df["capex_ttm"]
+        panel = pd.merge_asof(
+            panel.sort_values("filed"),
+            fcf_df[["filed", "fcf_ttm"]].sort_values("filed"),
+            on="filed", direction="backward",
+        )
+    else:
+        panel["fcf_ttm"] = float("nan")
+
+    # --- 营业利润率的同比变化（margin_trend）---
+    oi = _extract_single_quarter_duration(facts, "OperatingIncomeLoss")
+    rev = _extract_revenue(facts)
+    if not oi.empty and not rev.empty:
+        oi_q = _ttm_sum(oi).rename(columns={"ttm": "operating_income_ttm"})
+        rev_q = _ttm_sum(rev).rename(columns={"ttm": "revenue_ttm"})
+        margin_df = pd.merge(
+            oi_q[["end", "filed", "operating_income_ttm"]], rev_q[["end", "revenue_ttm"]], on="end", how="inner"
+        ).sort_values("end")
+        margin_df["operating_margin_ttm"] = float("nan")
+        positive_rev = margin_df["revenue_ttm"] > 0
+        margin_df.loc[positive_rev, "operating_margin_ttm"] = (
+            margin_df.loc[positive_rev, "operating_income_ttm"] / margin_df.loc[positive_rev, "revenue_ttm"]
+        )
+        # 只有真正相隔约1年（4个季度）的两个点才算YoY变化，数据有缺口、
+        # 季度不连续时不能悄悄拿"4行前"当"一年前"，会算出没有意义的数字
+        end_gap_days = (margin_df["end"] - margin_df["end"].shift(4)).dt.days
+        margin_trend = margin_df["operating_margin_ttm"] - margin_df["operating_margin_ttm"].shift(4)
+        margin_df["margin_trend"] = margin_trend.where(end_gap_days.between(330, 400))
+        panel = pd.merge_asof(
+            panel.sort_values("filed"),
+            margin_df[["filed", "margin_trend"]].sort_values("filed"),
+            on="filed", direction="backward",
+        )
+    else:
+        panel["margin_trend"] = float("nan")
+
     # 股东权益为负/为零时 ROE 没有经济意义（常见于大量股票回购的科技公司），
     # 学术上（Fama-French）标准做法是直接剔除负账面权益公司，而不是硬算出
     # 一个畸形的极端比率——否则会产生 inf/-inf，污染整个因子分布。
@@ -189,4 +267,6 @@ def build_fundamentals_panel(ticker: str, cik: str) -> pd.DataFrame | None:
         panel.loc[positive_equity, "net_income_ttm"] / panel.loc[positive_equity, "stockholders_equity"]
     )
     panel["roe_ttm"] = panel["roe_ttm"].astype("float64")
+    panel["fcf_ttm"] = panel["fcf_ttm"].astype("float64")
+    panel["margin_trend"] = panel["margin_trend"].astype("float64")
     return panel.sort_values("filed").reset_index(drop=True)

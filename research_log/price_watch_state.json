@@ -1,0 +1,51 @@
+{
+  "ATEX": {
+    "entry_price": 96.5872,
+    "entry_date": "2026-07-24",
+    "peak_price": 96.5872,
+    "last_price": 91.01,
+    "last_checked": "2026-07-27T14:43:00Z",
+    "pct_from_entry": -0.0577,
+    "hard_stop_price": 86.9285,
+    "trailing_stop_price": 82.0991,
+    "hard_stop_triggered": false,
+    "trailing_stop_triggered": false
+  },
+  "IRDM": {
+    "entry_price": 46.10,
+    "entry_date": "2026-07-24",
+    "peak_price": 46.10,
+    "last_price": 45.62,
+    "last_checked": "2026-07-27T14:43:00Z",
+    "pct_from_entry": -0.0104,
+    "hard_stop_price": 41.49,
+    "trailing_stop_price": 39.185,
+    "hard_stop_triggered": false,
+    "trailing_stop_triggered": false
+  },
+  "HPE": {
+    "entry_price": 48.9299,
+    "entry_date": "2026-07-24",
+    "peak_price": 48.9299,
+    "last_price": 46.51,
+    "last_checked": "2026-07-27T14:43:00Z",
+    "pct_from_entry": -0.0494,
+    "hard_stop_price": 44.0369,
+    "trailing_stop_price": 41.5904,
+    "hard_stop_triggered": false,
+    "trailing_stop_triggered": false
+  },
+  "AMD": {
+    "entry_price": 537.7599,
+    "entry_date": "2026-07-24",
+    "peak_price": 537.7599,
+    "last_price": 481.24,
+    "last_checked": "2026-07-27T15:44:00Z",
+    "pct_from_entry": -0.1051,
+    "hard_stop_price": 483.9839,
+    "trailing_stop_price": 457.0959,
+    "hard_stop_triggered": true,
+    "trailing_stop_triggered": false,
+    "note": "2026-07-27: hard stop breached, user chose not to sell (recorded exception, not a rule change). See research_log/2026-07-27.md and phase1/README.md."
+  }
+}
