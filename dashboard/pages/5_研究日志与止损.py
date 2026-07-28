@@ -1,8 +1,16 @@
 """
 每日云端routine（stock-strategy-daily-research）产出的研究日志 + 持仓止损监控，
-读的是 research_log/（跟 phase1/phase2 的 output/ 不一样，这个目录是被追踪进git的，
-routine每天在 github.com/XinyunShen/research-notebook 上提交，本地要先"拉取最新"
-才能看到当天的）。
+读的是 research_log/（跟 phase1/phase2 的 output/ 不一样，这个目录是被追踪进git的）。
+
+**2026-07-28确认的实际工作流**：routine自己的git push一直被一个疑似
+产品侧的GitHub连接权限问题挡住（个人账号，非机构装的"Claude" GitHub App
+没有repo写权限，claude.ai设置里也没有暴露对应的scope控制，查过找不到
+能自己修的入口），所以这个页面**不会自动更新**。routine每天真正稳定
+产出的是一封Gmail草稿（收件人alyssa.xinyun@gmail.com，标题"股票量化
+策略日报 YYYY-MM-DD"），**用户确认日常直接看Gmail草稿就够了，不必依赖
+这个dashboard页面**；只有明确让Claude Code relay的时候，Claude才会去
+读Gmail、手动写进research_log/、commit+push，这个页面才会更新。不要
+假设这里的数据是最新的，除非刚被要求relay过。
 """
 from __future__ import annotations
 
