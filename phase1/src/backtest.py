@@ -106,6 +106,7 @@ def simulate_portfolio(
     regime_filter: pd.Series | None = None,
     max_drawdown_from_peak: float | None = None,
     drawdown_lookback: int = 126,
+    position_scale: pd.Series | None = None,
 ) -> BacktestResult:
     """逐日模拟一个等权组合，返回净值曲线 + 每笔交易明细。
 
@@ -148,6 +149,18 @@ def simulate_portfolio(
     排除"，None表示不启用（默认关闭，不影响任何已有的历史回测结果）。
     这条规则**没有被原始回测验证过**，加进来之后必须重新跑一遍完整
     历史对比，不能假设"看起来更安全"就等于"回测数字更好"。
+
+    position_scale: **2026-07-28新增**，连续型仓位缩放（0-1之间的Series，
+    index=date），回应云端routine那天研究出的Daniel & Moskowitz《Momentum
+    Crashes》(2016)发现——regime_filter是"清仓/满仓"二元开关，论文提示
+    这个二元开关可能恰好卡在"恐慌期后市场反弹"这个动量策略最容易漏接
+    反弹的窗口。position_scale不清仓、不产生任何交易（因此不计交易成本），
+    只是把每天的持仓收益按当天的scale值打折算进净值曲线——scale=0.5表示
+    "当天的涨跌只影响一半的净值"，相当于经济上把一半仓位换成了现金但没有
+    真的产生买卖动作，是这个回测框架里能加的最小改动。**跟regime_filter
+    是独立的两个机制，可以同时开、也可以只开一个**，用来做A/B对比：
+    见 build_vix_scale_filter。止损/选股逻辑完全不受这个参数影响——只
+    影响"账户净值对价格变动的敏感度"，不影响"持有哪些股票"。
     """
     factor_wide = factor_panel[factor_col].unstack("ticker")
     market_cap_wide = factor_panel["market_cap"].unstack("ticker") if min_market_cap else None
@@ -174,6 +187,7 @@ def simulate_portfolio(
         #    踩的坑）。等权持仓，空仓部分按现金（0收益）算。
         if i > 0:
             prev_date = dates[i - 1]
+            scale_today = float(position_scale.get(today, 1.0)) if position_scale is not None else 1.0
             day_ret = 0.0
             for ticker, pos in holdings.items():
                 if ticker in prices_wide.columns:
@@ -182,7 +196,7 @@ def simulate_portfolio(
                     )
                     curr_price = prices_wide.loc[today, ticker]
                     if pd.notna(prev_price) and pd.notna(curr_price) and prev_price > 0:
-                        day_ret += (curr_price / prev_price - 1) / top_n
+                        day_ret += (curr_price / prev_price - 1) / top_n * scale_today
             equity.append(equity[-1] * (1 + day_ret))
             equity_dates.append(today)
 
@@ -270,6 +284,43 @@ def simulate_portfolio(
 
     equity_curve = pd.Series(equity, index=pd.DatetimeIndex(equity_dates))
     return BacktestResult(equity_curve=equity_curve, trades=trades)
+
+
+def build_vix_scale_filter(
+    vix_close: pd.Series,
+    high_percentile: float = 0.80,
+    min_scale: float = 0.5,
+    min_history: int = 252,
+) -> pd.Series:
+    """VIX分位数驱动的连续仓位缩放，供 simulate_portfolio 的 position_scale
+    参数使用（2026-07-28新增，回应design_doc.md之外的一次实盘触发的研究——
+    Daniel & Moskowitz《Momentum Crashes》(2016)发现动量策略的亏损集中在
+    "恐慌期"，且build_regime_filter那种二元清仓开关可能恰好卡在"恐慌期后
+    市场反弹"这个动量最容易漏接的窗口）。
+
+    做法：用**扩展窗口**（只用截至当天为止的历史，不用未来数据，避免前视
+    偏差）算VIX今天的值在历史分布里的百分位排名，超过high_percentile就把
+    仓位缩到min_scale，否则维持满仓（1.0）——是一个阶梯函数，不是论文里
+    更复杂的"用动量收益均值/方差做回归预测"版本，是能在现有回测框架里
+    低成本验证"连续缩放 vs 二元开关哪个更好"这个问题的最简单版本，不是
+    对原论文的完整复现。
+
+    high_percentile=0.80 / min_scale=0.5：直接对应云端routine那次研究
+    提议的具体数字（"波动率超过80分位时缩到50%左右"），不是本次新调出来
+    的参数——如果要做参数敏感性检查，应该在对比出"这个机制方向是否有效"
+    之后再做，不要一开始就在两个自由维度上调，那是design_doc.md 2.4节
+    警告的过拟合陷阱。
+
+    min_history=252（约1年交易日）：百分位排名在样本太少时没有统计意义，
+    历史不足一年时直接给满仓（1.0），不强行算一个基于几天数据的百分位。
+    """
+    expanding_rank = vix_close.expanding(min_periods=min_history).apply(
+        lambda s: (s.iloc[-1] > s.iloc[:-1]).mean() if len(s) > 1 else 0.5
+    )
+    scale = pd.Series(1.0, index=vix_close.index)
+    scale[expanding_rank >= high_percentile] = min_scale
+    scale[expanding_rank.isna()] = 1.0  # 历史不足min_history时，见函数docstring
+    return scale
 
 
 def build_regime_filter(index_prices: pd.Series, window: int = 200) -> pd.Series:
