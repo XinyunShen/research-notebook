@@ -107,6 +107,7 @@ def simulate_portfolio(
     max_drawdown_from_peak: float | None = None,
     drawdown_lookback: int = 126,
     position_scale: pd.Series | None = None,
+    defensive_returns: pd.Series | None = None,
 ) -> BacktestResult:
     """逐日模拟一个等权组合，返回净值曲线 + 每笔交易明细。
 
@@ -161,6 +162,19 @@ def simulate_portfolio(
     是独立的两个机制，可以同时开、也可以只开一个**，用来做A/B对比：
     见 build_vix_scale_filter。止损/选股逻辑完全不受这个参数影响——只
     影响"账户净值对价格变动的敏感度"，不影响"持有哪些股票"。
+
+    defensive_returns: **2026-07-29新增**，回应用户观察到的真实现象——
+    市场不稳定时资金会轮动进蓝筹/防御股（这几天新闻里可口可乐、
+    Sherwin-Williams财报后逆势上涨就是例子），而不是简单地"卖出躲现金"。
+    这是Series（index=date，值=当天收益率，比如某个防御性ETF的日收益率），
+    **只在regime_filter判定risk-off、导致持仓被清空的那些天**生效——
+    这些天原本equity_curve按0%（纯现金）计算，现在改成按
+    `defensive_returns.get(today, 0.0)`计算，模拟"risk-off时把钱切到
+    防御性资产而不是纯粹持有现金"。跟`regime_filter`必须同时提供才有
+    意义（没有risk-off就没有这些天可以替换）。现有302只股票的研究
+    universe是纯AI供应链主题池（design_doc.md 3.2.1），**天生不包含
+    可口可乐这类传统防御股**，所以防御性收益率要从外部传入（比如
+    XLP消费必需品板块ETF），不能指望从universe内部的因子里构造出来。
     """
     factor_wide = factor_panel[factor_col].unstack("ticker")
     market_cap_wide = factor_panel["market_cap"].unstack("ticker") if min_market_cap else None
@@ -197,6 +211,10 @@ def simulate_portfolio(
                     curr_price = prices_wide.loc[today, ticker]
                     if pd.notna(prev_price) and pd.notna(curr_price) and prev_price > 0:
                         day_ret += (curr_price / prev_price - 1) / top_n * scale_today
+            if not holdings and defensive_returns is not None:
+                # 空仓（regime risk-off清仓后）用防御性资产收益率代替纯现金
+                # 0%，见函数docstring defensive_returns 说明
+                day_ret = float(defensive_returns.get(today, 0.0))
             equity.append(equity[-1] * (1 + day_ret))
             equity_dates.append(today)
 

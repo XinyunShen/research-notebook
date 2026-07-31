@@ -24,6 +24,17 @@ SELL（止损触发或掉出前N名）/ HOLD（继续持有）/ BUY（新进前N
 也不会有人告诉你，真正逐日生效的止损请在下单时顺手在Schwab挂原生的
 stop order / trailing stop order（见README讨论）。
 
+**2026-07-28补充的一个真实教训**：2026-07-24买入的ATEX，B. Riley在
+2026-06-04（买入前近7周）就已经把评级从Buy下调到Neutral（理由：900MHz
+频谱变现存在不确定性），同期还有CFO辞职、内部人卖出股价下跌8.6%这些
+公开可查的负面消息——**这条流水线从选股到下单，没有任何一步会去查
+"这只股票最近有没有分析师下调评级/内部人减持/高管变动"，纯粹是价格
+动量+估值快照（P/E、P/B）**。这不是bug，是这个脚本本身的能力边界：
+它是纯Python脚本，没有联网搜索能力，查不了新闻。**这个检查必须由跑
+这个脚本的人（或者在对话里协助的Claude Code）在下单前手动做**，本
+脚本的输出只能提醒"该查"，做不到自动查——见下方main()末尾的打印提醒，
+不要跳过。
+
 用法：
     cd phase1 && source .venv/bin/activate && python -m src.live_signal
 """
@@ -238,6 +249,11 @@ def main():
     if buys:
         label = "首次建仓" if is_first_run else "新进前列，买入"
         print(f"\n[live_signal] === 买入：{label} ===")
+        print(f"[live_signal] ⚠️  下单前必读（2026-07-28教训，见脚本顶部docstring）：这份名单"
+              f"纯粹是价格动量+估值快照，没有查过近期有没有分析师下调评级/内部人减持/高管变动/"
+              f"业绩指引下修——ATEX那次这些消息在买入前7周就已经公开，但流水线完全没查。"
+              f"对下面每一只，先手动搜一下'TICKER analyst downgrade OR insider selling OR "
+              f"guidance cut'，有实质性负面消息的，不要只因为动量分数高就买。")
     new_positions = dict(holds)
     for t in buys:
         px = px_today.get(t)

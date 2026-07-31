@@ -20,6 +20,12 @@
 - margin_trend：TTM营业利润率相对一年前同口径TTM营业利润率的变化，跟
   ROE是不同的角度——ROE看"现在赚不赚钱"，这个看"利润率在变好还是变差"。
 
+**2026-07-29新增1个**（用户提出"看增量的增量"理论——2008次贷危机房价
+涨幅逐季度收窄、SK海力士营收利润暴增但仍不及预期导致股价大跌，都是
+"市场price的是增长率本身在加速还是减速，不是水平值"这个机制）：
+- revenue_growth_accel：营收同比增速的季度环比变化（二阶导数）——不是
+  "营收增长率"这个水平值，是"这一季的增速比上一季的增速是快了还是慢了"。
+
 关键工程细节（避免前视偏差）：用 pd.merge_asof(..., direction="backward")
 把"某一天"匹配到"当天为止最新已公开申报"的财务数据，绝不会用到未来才
 披露的数字。
@@ -97,17 +103,19 @@ def compute_fundamental_factors(prices: pd.DataFrame, tickers: list[str]) -> pd.
         merged["fcf_yield"] = merged["fcf_yield"].astype("float64")
 
         all_rows.append(
-            merged[["date", "ticker", "roe_ttm", "book_to_market", "market_cap", "fcf_yield", "margin_trend"]]
+            merged[["date", "ticker", "roe_ttm", "book_to_market", "market_cap", "fcf_yield",
+                    "margin_trend", "revenue_growth_accel"]]
         )
 
     if not all_rows:
         return pd.DataFrame(
-            columns=["date", "ticker", "roe_ttm", "book_to_market", "market_cap", "fcf_yield", "margin_trend"]
+            columns=["date", "ticker", "roe_ttm", "book_to_market", "market_cap", "fcf_yield",
+                     "margin_trend", "revenue_growth_accel"]
         )
     result = pd.concat(all_rows, ignore_index=True)
     # 防御性兜底：任何遗漏路径产生的 inf/-inf 一律当缺失值处理，不能流入
     # 后续的 IC 检验/分层回测，否则会让统计量彻底失真（比如 mean() 变成 -inf）。
-    for col in ["roe_ttm", "book_to_market", "fcf_yield", "margin_trend"]:
+    for col in ["roe_ttm", "book_to_market", "fcf_yield", "margin_trend", "revenue_growth_accel"]:
         result[col] = pd.to_numeric(result[col], errors="coerce").replace(
             [float("inf"), float("-inf")], float("nan")
         )

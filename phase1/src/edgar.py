@@ -253,8 +253,37 @@ def build_fundamentals_panel(ticker: str, cik: str) -> pd.DataFrame | None:
             margin_df[["filed", "margin_trend"]].sort_values("filed"),
             on="filed", direction="backward",
         )
+
+        # --- 营收增速的加速度（revenue_growth_accel，2026-07-29新增）---
+        # 回应用户提出的"看增量的增量"理论（2008次贷危机：房价还在涨，但
+        # 涨幅逐季度收窄；今天新闻里SK海力士营收+257%/利润+557%但仍不及
+        # 预期导致股价大跌，也是同一个机制）——市场price的不是"增长率"
+        # 这个水平值本身，是"增长率相对上一期是在加速还是减速"，哪怕两个
+        # 数字（增长率本身）都是正的、绝对值再高，减速本身就可能被解读成
+        # 坏消息。这跟margin_trend（利润率的同比变化）是不同维度：margin_trend
+        # 看"赚钱效率在变好还是变差"，这个看"增长本身在加速还是减速"，
+        # 两者都是"变化率的变化率"这个思路的具体应用，但作用在不同分子上。
+        rev_growth = rev_q[["end", "filed", "revenue_ttm"]].sort_values("end").reset_index(drop=True)
+        end_gap_4q = (rev_growth["end"] - rev_growth["end"].shift(4)).dt.days
+        prior_year_rev = rev_growth["revenue_ttm"].shift(4)
+        yoy_growth = pd.Series(float("nan"), index=rev_growth.index)
+        valid_yoy = end_gap_4q.between(330, 400) & (prior_year_rev > 0)
+        yoy_growth[valid_yoy] = rev_growth.loc[valid_yoy, "revenue_ttm"] / prior_year_rev[valid_yoy] - 1
+        # 加速度：这一期的同比增速 减去 上一季度的同比增速——只有真正相隔
+        # 一个季度（~90天）的两个点才算，避免数据缺口把不相邻的两期错当
+        # "上一季度"比较（同一类"不能用行号当日历"的坑，margin_trend那段
+        # 已经踩过一次，这里延续同样的防御写法）。
+        end_gap_1q = (rev_growth["end"] - rev_growth["end"].shift(1)).dt.days
+        growth_accel = yoy_growth - yoy_growth.shift(1)
+        rev_growth["revenue_growth_accel"] = growth_accel.where(end_gap_1q.between(75, 100))
+        panel = pd.merge_asof(
+            panel.sort_values("filed"),
+            rev_growth[["filed", "revenue_growth_accel"]].sort_values("filed"),
+            on="filed", direction="backward",
+        )
     else:
         panel["margin_trend"] = float("nan")
+        panel["revenue_growth_accel"] = float("nan")
 
     # 股东权益为负/为零时 ROE 没有经济意义（常见于大量股票回购的科技公司），
     # 学术上（Fama-French）标准做法是直接剔除负账面权益公司，而不是硬算出
