@@ -44,6 +44,68 @@ def load_ticker_to_cik() -> dict[str, str]:
     return {v["ticker"].upper(): str(v["cik_str"]).zfill(10) for v in raw.values()}
 
 
+_FULLTEXT_SEARCH_URL = "https://efts.sec.gov/LATEST/search-index"
+
+
+def check_recent_executive_departures(cik: str, as_of: str, lookback_days: int = 90) -> list[dict]:
+    """**2026-07-31新增**，回应live_signal.py 2026-07-28补的教训（ATEX买入前
+    B. Riley下调评级+CFO变动这类负面消息，整条流水线原来没有一步会自动查）——
+    这个函数专门查"高管离职"这一类，用EDGAR全文检索(efts.sec.gov)，不是
+    Form 4那种要逐条filing拉XML的重活，一次请求就够，跑得快很多。
+
+    高管变动强制披露走的是8-K的Item 5.02条款，但**Item 5.02同时覆盖"离职"
+    和"新聘任/晋升"两种情况**，光看这个条款代码分不清是坏消息还是中性/好
+    消息（比如提拔内部人接任、新CFO到位都会走同一个条款），所以这里用
+    forms=8-K的**全文关键词检索**（"resign"/"resignation"/"departure"）
+    叠加日期范围过滤，不是单纯按items字段筛——这是一个偏保守的启发式
+    方法：宁可漏掉一些用词生僻的离职公告（比如"stepping down"没被覆盖到
+    也算漏报），也不想把"新聘任CFO"这种中性消息误判成负面离职事件。
+    返回的是原始filing列表（日期、accession号、items），**不代表"一定是
+    坏消息"**，只是把"最近90天内有没有可能相关的高管变动8-K"这一步自动化，
+    仍然需要人工/routine进一步判断该次事件的实质是好是坏（比如正常退休
+    换届 vs 仓促离职）——这跟公司特定消息检查（routine Step 0.4）的角色
+    分工是互补的，不是替代关系。
+
+    as_of: 检索窗口的结束日期（通常是"今天"），lookback_days: 往前看多少天
+    （默认90天，对应设计里"3个月"这个惯用窗口，跟routine手动检查的口径
+    保持一致）。
+    """
+    from datetime import datetime, timedelta
+
+    end = datetime.strptime(as_of, "%Y-%m-%d")
+    start = end - timedelta(days=lookback_days)
+    r = requests.get(
+        _FULLTEXT_SEARCH_URL,
+        params={
+            "q": '"resign" OR "resignation" OR "departure"',
+            "forms": "8-K",
+            "ciks": cik,
+            "dateRange": "custom",
+            "startdt": start.strftime("%Y-%m-%d"),
+            "enddt": end.strftime("%Y-%m-%d"),
+        },
+        headers=HEADERS,
+        timeout=15,
+    )
+    if r.status_code != 200:
+        return []
+    try:
+        hits = r.json()["hits"]["hits"]
+    except (KeyError, ValueError):
+        return []
+    return [
+        {
+            "filed": h["_source"]["file_date"],
+            "accession": h["_source"]["adsh"],
+            "items": h["_source"].get("items", []),
+        }
+        for h in hits
+        if "5.02" in h["_source"].get("items", [])  # 只保留真正带高管变动条款的，
+        # 排除纯粹因为正文提到"resign"这个词但跟Item 5.02无关的误命中
+        # （比如某条新闻稿引用了别家公司高管辞职当背景，8-K正文偶尔会提到）
+    ]
+
+
 def fetch_company_facts(cik: str) -> dict | None:
     """拉取单家公司全部 XBRL facts（us-gaap + dei），本地缓存 JSON。"""
     cache_file = CACHE_DIR / f"{cik}.json"

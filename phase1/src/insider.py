@@ -137,10 +137,35 @@ def _list_form4_filings(cik: str, start: str) -> list[dict]:
     return filings
 
 
+def _parse_aff10b5one(root: ET.Element) -> bool | None:
+    """解析文档级的 aff10b5One 标志（2026-07-31新增）——Rule 10b5-1计划性
+    交易的勾选框，**是整份filing级别的字段，不是逐笔交易级别的**（实测
+    确认：这个元素直接挂在 <ownershipDocument> 根节点下，不在每条
+    nonDerivativeTransaction里面），所以一份filing里的所有P/S交易共享
+    同一个标志。**取值格式不统一**：实测同期不同公司/不同schema版本里
+    见过"0"/"1"（INTC/NVDA/MSFT）和"true"/"false"（AAPL）两种写法，
+    必须都处理，不能只认数字。缺失（字段不存在）时返回None，不当0处理——
+    "没有这个字段"和"这个字段明确填了0"是不同的信息状态，不能悄悄合并。
+    """
+    el = root.find("./aff10b5One")
+    if el is None or el.text is None or not el.text.strip():
+        return None
+    val = el.text.strip().lower()
+    if val in ("1", "true"):
+        return True
+    if val in ("0", "false"):
+        return False
+    return None
+
+
 def _fetch_and_parse_transactions(cik_nolead: str, accession: str, primary_doc: str, filed: str) -> list[dict]:
     """拉单条filing的原始XML（不是XSLT渲染的HTML，是同一目录下的raw XML
     文件，把 primaryDocument 路径里的 xsl.../ 前缀去掉、取basename即是），
-    解析出P/S两种代码的非衍生品交易。"""
+    解析出P/S两种代码的非衍生品交易，附带这份filing的aff10b5One标志
+    （2026-07-31新增，回应design_doc.md早就记录的TODO——区分"计划性
+    卖出"和"自主决策交易"，前者是几个月前设定好的公式化执行，不携带
+    "内部人现在怎么看公司"的信息，学术文献（Jagolinzer 2009等）证实
+    几乎没有预测力，混在一起会稀释真正有信息含量的自主交易信号）。"""
     accession_nodash = accession.replace("-", "")
     raw_filename = primary_doc.split("/")[-1]
     url = f"https://www.sec.gov/Archives/edgar/data/{cik_nolead}/{accession_nodash}/{raw_filename}"
@@ -151,6 +176,8 @@ def _fetch_and_parse_transactions(cik_nolead: str, accession: str, primary_doc: 
         root = ET.fromstring(r.text)
     except ET.ParseError:
         return []
+
+    is_10b5_1 = _parse_aff10b5one(root)
 
     rows = []
     for txn in root.findall(".//nonDerivativeTransaction"):
@@ -165,14 +192,16 @@ def _fetch_and_parse_transactions(cik_nolead: str, accession: str, primary_doc: 
             shares = float(shares_el.text)
         except ValueError:
             continue
-        rows.append({"filed": filed, "code": code, "shares": shares})
+        rows.append({"filed": filed, "code": code, "shares": shares, "is_10b5_1_plan": is_10b5_1})
     return rows
 
 
 def fetch_ticker_insider_transactions(
     ticker: str, cik: str, start: str, max_workers: int = 8, force_refresh: bool = False
 ) -> pd.DataFrame:
-    """单只股票的P/S内部人交易明细，本地缓存。返回列：filed, code, shares
+    """单只股票的P/S内部人交易明细，本地缓存。返回列：filed, code, shares,
+    is_10b5_1_plan（2026-07-31新增，见_parse_aff10b5one/_fetch_and_parse_transactions
+    注释；True=计划性交易，False=自主交易，None=filing没有这个字段）
 
     **硬性兜底**（PER_TICKER_DEADLINE_SECONDS）：实测跑全量305只时，网络
     一抖，ALGM 一只卡了92分钟——重试参数已经调紧（见_get注释），但为了
@@ -210,20 +239,32 @@ def fetch_ticker_insider_transactions(
         finally:
             executor.shutdown(wait=False, cancel_futures=True)
 
-    result = pd.DataFrame(all_rows, columns=["filed", "code", "shares"])
+    result = pd.DataFrame(all_rows, columns=["filed", "code", "shares", "is_10b5_1_plan"])
     if not result.empty:
         result["filed"] = pd.to_datetime(result["filed"])
     result.to_parquet(cache_path, index=False)
     return result
 
 
-def compute_insider_flow_factor(prices: pd.DataFrame, tickers: list[str], start: str, window: int = WINDOW) -> pd.DataFrame:
+def compute_insider_flow_factor(
+    prices: pd.DataFrame, tickers: list[str], start: str, window: int = WINDOW,
+    exclude_10b5_1: bool = False,
+) -> pd.DataFrame:
     """返回长表：columns=[date, ticker, insider_net_buy_pct]
 
     insider_net_buy_pct = 过去window个交易日内，Form 4公开市场买入(P)减
     卖出(S)的净股数，除以最新流通股数。shares_outstanding复用
     edgar.build_fundamentals_panel（已经在factors.py的流程里缓存过，
     这里不会产生新的网络请求），用merge_asof做point-in-time对齐。
+
+    exclude_10b5_1: **2026-07-31新增**，True时剔除标记为Rule 10b5-1
+    计划性交易（`is_10b5_1_plan is True`）的记录，只用自主决策交易算净
+    买入——见design_doc.md早就记录的TODO + 学术文献（Jagolinzer 2009等）：
+    计划性交易是几个月前设定好的公式化执行，不携带"内部人现在怎么看
+    公司"的信息，混在一起会稀释真正有信息含量的自主交易信号。缺失
+    该字段的旧记录（is_10b5_1_plan为None，通常是刷新前缓存的数据）
+    保守地当作"非计划性"处理，不剔除——不能因为字段缺失就武断地丢弃
+    数据，缺失和"确认是自主交易"在这里做同样处理是刻意的保守选择。
     """
     ticker_to_cik = edgar.load_ticker_to_cik()
     all_rows = []
@@ -247,6 +288,8 @@ def compute_insider_flow_factor(prices: pd.DataFrame, tickers: list[str], start:
             continue
 
         txns = txns.copy()
+        if exclude_10b5_1 and "is_10b5_1_plan" in txns.columns:
+            txns = txns[txns["is_10b5_1_plan"] != True]  # noqa: E712（三态字段，不能写成~txns[...]）
         txns["signed_shares"] = txns["shares"] * txns["code"].map({"P": 1.0, "S": -1.0})
         daily_net = txns.groupby("filed")["signed_shares"].sum()
         daily_net = daily_net.reindex(pd.DatetimeIndex(px["date"]), fill_value=0.0)
