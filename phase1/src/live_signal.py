@@ -61,7 +61,14 @@ LIVE_PRICE_CACHE = DATA_DIR / "live_prices.parquet"  # 独立缓存路径，
 STATE_PATH = OUTPUT_DIR / "live_portfolio_state.json"
 
 # --- 照抄 README.md"参数敏感性检查"验证过的稳健基准值，不在这里重调 ---
-TOP_N = 4
+TOP_N = 10  # 2026-08-05更新（原为4）：21路径分布测试显示4→10只CAGR几乎不变
+# （2016-2026都在19-21%区间），但最大回撤单调改善（4只最差-62% vs 10只
+# 最差-45%）、Sharpe单调改善（0.71→0.79），纯分散化收益，见README.md
+# "TOP_N持仓数敏感性"一节。原来选4只是因为"Schwab不支持零股"的理由，
+# 实盘已经在Robinhood用碎股成交（ATEX 0.880033股），这条理由不再适用。
+# **用户2026-08-05决定：从下一次再平衡（约2026-08-24）起生效，当前已持有
+# 的3只(ATEX/IRDM/HPE)不因为这个参数变化被提前调整**——改常量本身不是
+# 交易动作，只影响下次真正跑这个脚本时的目标持仓数。
 CAPITAL = 20_000
 ALLOCATION_PER_POSITION = CAPITAL / TOP_N
 HARD_STOP_LOSS = 0.10
@@ -266,6 +273,12 @@ def main():
         print(f"  买入 {t}: {shares}股 @ ${px:.2f} = ${actual_dollars:,.2f} "
               f"(目标${ALLOCATION_PER_POSITION:,.0f}的{deviation*100:+.1f}%)，"
               f"动量{score*100:.1f}%，硬止损价${hard_stop_price:.2f}(-{HARD_STOP_LOSS*100:.0f}%){marker}")
+        print(f"     ⚠️  2026-08-05新增（见README\"TOP_N持仓数敏感性\"一节后续讨论）：下单必须用"
+              f"quantity={shares}（整股）+type=market，**不能用dollar_amount**——Robinhood的"
+              f"stop_market/stop_limit订单不支持碎股，用dollar_amount买入会成交成碎股，导致后面"
+              f"完全挂不上止损单（7/24这批ATEX/IRDM/HPE碎股买入就是这样，现在补不上）。买入成交后"
+              f"必须立刻挂一笔stop_market卖单：quantity={shares}，stop_price=${hard_stop_price:.2f}，"
+              f"time_in_force建议gtc（不然当天没触发第二天就失效，等于没挂）。")
         if t in WASH_SALE_WATCH_TICKERS:
             print(f"     ⚠️  {t}在wash sale watch名单里——如果account_1/account_2的{t}税损收割"
                   f"批次已经卖出且还在30天窗口内，买这个会让已实现的损失被追溯作废，"
